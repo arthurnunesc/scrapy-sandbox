@@ -1,10 +1,12 @@
 import scrapy
 from typing import List
+from scrapy.spiders import Rule, CrawlSpider
+from scrapy.linkextractors import LinkExtractor
 
 
-class AdidasScraper(scrapy.Spider):
+class AdidasScraper(CrawlSpider):
     name = "adidas_scraper"
-    base_url = "https://www.adidas.es"
+    allowed_domains = ["www.adidas.es"]
     start_urls = [
         # item not on sale with a single color
         "https://www.adidas.es/terrex-swift-r3-gtx-low-y-3/FZ6410.html",
@@ -17,15 +19,55 @@ class AdidasScraper(scrapy.Spider):
         # item out of stock
         "https://www.adidas.es/zapatilla-pharrell-williams-terrex-free-hiker-cold.rdy-hiking/GZ9820.html",
     ]
+    rules = (Rule(LinkExtractor(allow=()), callback="parse_item", follow=True),)
 
-    def start_requests(self):
+    def request(self, url, callback):
         h = {
-            "cookie": 'geo_coordinates=lat=40.41, long=-3.71; AKA_A2=A; _abck=169A9A9CC7D0379B2614E0AF30894F0F~-1~YAAQBY4hF3XpRwiIAQAAVJUjPwnKs9VFXGvY12g+37zfUUCOgjbFsBSE2o6FzN61tM1sJ5eGYAOAUMOGB+NeacnRxqKLhyNMWmwnGaCNCEK0pSHv8oE3V1a5YpNU864NN8N5ni+isKwQKZ+kS5Kb3N4vf7sigpLIL8CcUO1vNd7bWkB2S+qYdzLM1ou6Y6fIMURtJpmTRkBcxbgwe3wA/L7cr3WGtcJyOwvo3DI6h1LGm3qVrXMVGxJdXa6xxUGC1NPjJV6P1g/GrXBrd8ZYjIp4AhpmZk7iIufWlOUbXMJDRK8E77k8YuVURku429Tm0xurFRwg+ep+o0zCxmZgPBZTkJbRrFpK8hyEUeYazfOZZmisaBpk+PNa7yERUaj59/kqmMP5CMH0GqSyIG+Brb8pOQM7XXPIpNGSbdlLYuH3sSdiw2Qztc9TzaI0vRo62+KZzu+QWg==~-1~-1~1684689959; ak_bmsc=E91335B6F44B67E58F77E4F4503676A2~000000000000000000000000000000~YAAQBY4hF8jnRwiIAQAAC3cjPxOYOBUtgtdUDhG/iFL9w7m705CQCUuSf39O4/vqaaNrkyKrxw8Jxp4aigmOxBWukFXIJhD2P0Lr8h0hms8KG22sn5z204UDazDSoh8q5f+RBAcEQKk+67eoH0lXCk2tyEmZzgb9A11Olz7hG6hogGLxvOquP30yQ8ltRFDbgehabUrPc2sIUQc+l/KUpd35mku2/Ahto5FnWgxXV4V5KRdIwpGR47vZb6m5GjCg8tsyjv+rp+L9i2P4lHdY2DvFdUg6Ejj07X1M26AryKpzwpvAmbza8j2N4nJaRN2x91a8Gr9IukcVFoIqwVBwauU5TUo9xBRrx0E+LvgXFXD4R7WyeX5S/ab+fWMpWjQmGsIHTitiXA==; bm_sz=A751F295126E783794599C596513C249~YAAQGI4hFx+rKTSIAQAAvxEbPxPBr1L9dYweNNVtBtd+8+fKyLQjIYarKfGTgxOl9QAIUTa0iMetv894Spsa9shfLy57xkCrqCDSwK+qf0fOO0wRQ9eU70sky/GO8hu+c/URNiinlYE8eTC7Rm81PofALVNHNgJbfIcI3Jm3D6uArcy/awup/o+EejsOlhSazSP8UiPS6JCbGhBHjB2BiMewQ0pmIfcK5qJYqdbK1XaIFkl36A8uZLwH4Z5hwhgQ55pYzOk2hfeBXgndZ7RFHVHumqBwyJcyl8MnbnCXilhBb9fxnXf/s1oHiCTgO9c/WyaIoJGzgDtr6t8hOniOsJ4KRPCufNyCSdWcZYNydQLDrclfzy/VgDmE4RAZLQN9RZj/pdtWPOqkBeRqxlSIsA8=~3356997~4404289; mt.v=5.1872337011.1684685920539; RT="z; ab_qm=b; mt.sc=%7B%22i%22%3A1684685925786%2C%22d%22%3A%5B%5D%7D; geo_ip=79.156.136.188; geo_country=ES; akacd_generic_prod_grayling_adidas=3862138717~rv=49~id=db7b8aef50647332bcd2cbef7e150e3e; akacd_plp_prod_adidas_grayling=3862138717~rv=65~id=613ff70d1bfbdc5311dfbd1b2bad21a2; persistentBasketCount=0; userBasketCount=0; dwsid=kdHgutbPvuSA34voXyfthBTrh99uc8v7va291a-N3ueMSNPC4RmosNRMDGREysB6Cbn7dWOLDO-mfLXOcIHDvw==; fallback_dwsid=kdHgutbPvuSA34voXyfthBTrh99uc8v7va291a-N3ueMSNPC4RmosNRMDGREysB6Cbn7dWOLDO-mfLXOcIHDvw==; pagecontext_cookies=; pagecontext_secure_cookies=; AMCVS_7ADA401053CCF9130A490D4C%40AdobeOrg=1; ab_inp=b; s_cc=true; AMCV_7ADA401053CCF9130A490D4C%40AdobeOrg=-227196251%7CMCIDTS%7C19499%7CMCMID%7C36243463357088667181757733032661332202%7CMCAAMLH-1685290724%7C6%7CMCAAMB-1685290724%7C6G1ynYcLPuiQxYZrsz_pkqfLG9yMXBpb2zX5dvJdYQJzPXImdj0y%7CMCOPTOUT-1684693125s%7CNONE%7CMCAID%7CNONE; UserSignUpAndSave=3; newsletterShownOnVisit=false; utag_main=v_id:01883f1b24f1001518bd8db8ea6c0504600160090086e$_sn:1$_se:8$_ss:0$_st:1684688276872$ses_id:1684685923570%3Bexp-session$_pn:3%3Bexp-session$ab_dc:TEST%3Bexp-1689870471878$_vpn:3%3Bexp-session$_prevpage:HOME%3Bexp-1684690076881$ttdsyncran:1%3Bexp-session$dcsyncran:1%3Bexp-session$dc_visit:1$dc_event:1%3Bexp-session; s_pers=%20s_vnum%3D1685570400898%2526vn%253D1%7C1685570400898%3B%20s_invisit%3Dtrue%7C1684688276814%3B; notice_preferences=2; _gcl_au=1.1.1624391566.1684686477; _ga_4DGGV4HV95=GS1.1.1684686473.1.1.1684686476.0.0.0; _uetsid=72720940f7f411ed9541ef21c1935d37; _uetvid=72722130f7f411ed9e71fd14cf34eeb4; _scid=d523711e-0068-4323-88e6-f8a06a7d1bf0; _scid_r=d523711e-0068-4323-88e6-f8a06a7d1bf0; _pin_unauth=dWlkPVpqZzBNR1JqTW1JdE5USmxNaTAwT0dSbUxXSXlaamt0TXpFNU1EbGtZell4T0RobQ; QSI_HistorySession=https%3A%2F%2Fwww.adidas.es%2F~1684686479687',
+            "Accept-Language": "en-US,en;q=0.9",
         }
-        for url in self.start_urls:
-            yield scrapy.Request(url, headers=h, callback=self.parse)
+        c = {
+            "geo_ip": "195.55.43.196",
+            "geo_country": "ES",
+            "geo_coordinates": "lat=40.41, long=-3.71",
+            "AKA_A2": "A",
+            "akacd_generic_prod_grayling_adidas": "3862295581~rv=89~id=88d8b6eff90a6476790aee07edeb7b83",
+            "_abck": "C7170297EA8A75727618A3CEE12E83C8~-1~YAAQym1lXzbljEeIAQAAa710SAm/9xD0dUqujvu/j+vzk5MGgXdr0ZAcnXCuaj7tPpViWtEJIpGN4Q7uIThivnDobq6E/Lq3KBj+kV1uk6is9vhBhrX+dw98BWytZx6z7Mp28ZHCUNkU1XOUHU+wIX10itQbz/3m/PhvdmDzIMwZtWdlMMfnc9wltw7zX/fEN6k+ir0lNXLXEoJZsCSawKuxvgkRFM+8Ds4UYBesidfxjnyaiuf3OYw1/Y8rZN2WRpdGNytxkBTognCBVwJEqEkE2dZmb8tjWa0Uv9RNb9o9jTtwackKX0dLUfPlMFFJ73KlZfMbWuX05vOnyfqvNGHE2Xry08/bD06lpcHBf3sgkI1wuAHvTX1O/CdlPy5yxgFLjY6ylR2VidOsAW9L9NVUQX/aqPR4YAEaMpEGgPZLKePTzeQoLeU=~-1~||-1||~1684846309",
+            "ak_bmsc": "1442BAC63B710F4FCF44696C4B538A29~000000000000000000000000000000~YAAQym1lXwrkjEeIAQAAsa50SBPPImDUP+2IXPno6Vb9Up1mf2cRn6mJk3/dwsFcRpZMfmhw28XtFybM4DtQ8Kob39QQ9VJtE61kzER/XMMHaeE8IehTOPf8GJ38tHxG5whBhRTvrG1C7byWpa85G/e1ciajB47MCAlw1rwCVBz8wDKK1qReywIqqc0Tt1dtpo7sbkWhpXApAeq0fRT/gOWSpYRtu1UcFawqA63kGmQm+dar2uHfHoBnZI4bfI3DqNZO5+0+rWF8oJcNVAp0mgfzd36/WovAyNBMsc2m2gNW6bUXUhzMU/mTyHTUmma9jaCY96BokcJhv4M9S1WeZFowNIo6WMUS2EMBHSthEr7jSvY4YJjKl6Clqi7W0vWmJmGQwFpz",
+            "bm_sz": "514AE047BCAECA6EF847CDC9BFD9480E~YAAQym1lXwvjjEeIAQAATqF0SBMIVLY/GvNfRrbxpVeT7voSgYadGxxV1Nw59/tTUWY0aJ6inbt5Xd+QZBej5F74Laj10mat7uyjMwkrecvjdmdB49DdnJE4SQ2UPLFSqFg24M3Kxc+AvwAZJpRErqa9mRMYkkmZfWrFBzz2VzqtXENgDWe5ziZ3Ky83Nub+cWkpXTYasIwPCCrax4R3ctQeiauLj3+alS8PY+aIWtOoO1CO7vPuVPpA8bY3PyGoUFo2uE+otw0lUz7FUybV45bU/irGstJ4hhJPCZ67Tt8DZMayRCg98QEM+3h51k6TyXGteDe7shH8jikIG6uYhAEg+jEJyRJDC/+fcldPhtkoFtx3aZ9/bumsnsaOuLnIVLtucSv6WR9nAf7AVA6GXg==~3159601~3617588",
+            "akacd_plp_prod_adidas_grayling": "3862295582~rv=93~id=c9d90c9fb913f260e398b43de02f62b8",
+            "UserSignUpAndSave": "1",
+            "persistentBasketCount": "0",
+            "userBasketCount": "0",
+            "newsletterShownOnVisit": "false",
+            "dwsid": "B_sNQXau8LIHISlTetQHAL2iwfYZe1cBgcoA9vMzA3im7AjiLdk7ACSmpoKASO_r8VUgKJxZvwcMiCYW2c5o1A==",
+            "fallback_dwsid": "B_sNQXau8LIHISlTetQHAL2iwfYZe1cBgcoA9vMzA3im7AjiLdk7ACSmpoKASO_r8VUgKJxZvwcMiCYW2c5o1A==",
+            "pagecontext_cookies": "",
+            "pagecontext_secure_cookies": "",
+            "mt.v": "5.1225526451.1684842786484",
+            "utag_main": "v_id:01884874be8200100c0e890642260504600160090086e$_sn:1$_se:2$_ss:0$_st:1684844591424$ses_id:1684842790531%3Bexp-session$_pn:1%3Bexp-session$ab_dc:TEST%3Bexp-1690026790548$_vpn:1%3Bexp-session$_prevpage:HOME%3Bexp-1684846390953",
+            "ab_qm": "b",
+            "AMCV_7ADA401053CCF9130A490D4C@AdobeOrg": "-227196251|MCIDTS|19501|MCMID|11934500997958010111591625035882355353|MCAID|NONE|MCOPTOUT-1684849992s|NONE",
+            "ab_inp": "a",
+            "AMCVS_7ADA401053CCF9130A490D4C@AdobeOrg": "1",
+            "s_pers": " s_vnum=1685570400338&vn=1|1685570400338; s_invisit=true|1684844592344;",
+            "s_cc": "true",
+        }
+        return scrapy.Request(url=url, callback=callback, cookies=c, headers=h)
+        # return scrapy.Request(url=url, callback=callback)
 
-    def parse(self, response):
+#     def start_requests(self):
+#         for i, url in enumerate(self.start_urls):
+#             yield self.request(url, self.parse_items)
+
+    def parse_items(self, response):
+        cookie_value = response.headers.get("Set-Cookie")
+        if cookie_value:
+            # Set the cookie value in subsequent requests
+            yield scrapy.Request(
+                response.url, headers={"Cookie": cookie_value}, callback=self.parse_page
+            )
+
+    def parse_page(self, response):
         if (
             response.css("div.gl-price-item--sale::text").get() is not None
             and response.css("div.gl-price-item--crossed::text").get() is not None
